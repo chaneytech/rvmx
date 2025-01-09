@@ -10,11 +10,18 @@ pub enum Opcode {
     JMP,
     JMPF,
     JMPB,
+    EQ,
+    NEQ,
+    GT,
+    LT,
+    GTQ,
+    LTQ,
+    JEQ,
 }
 
 #[derive(Debug, PartialEq)]
 pub struct Instruction {
-    pub(crate) opcode: Opcode,
+    pub opcode: Opcode,
 }
 
 impl Instruction {
@@ -36,6 +43,13 @@ impl From<u8> for Opcode {
             7 => Opcode::JMP,
             8 => Opcode::JMPF,
             9 => Opcode::JMPB,
+            10 => Opcode::EQ,
+            11 => Opcode::NEQ,
+            12 => Opcode::GT,
+            13 => Opcode::LT,
+            14 => Opcode::GTQ,
+            15 => Opcode::LTQ,
+            16 => Opcode::JEQ,
             _ => Opcode::IGL,
         }
     }

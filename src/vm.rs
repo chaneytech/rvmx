@@ -1,10 +1,15 @@
 use crate::instruction::Opcode;
 
 pub struct Vm {
+    // Array that simulates having hardware registers
     pub registers: [i32; 32],
     pub pc: usize,
+    // The bytecode of the program being run
     pub program: Vec<u8>,
+    // Contains the remainder of modulo division ops
     pub remainder: u32,
+    // Contains the result of the last comparison operation
+    pub equal_flag: bool,
 }
 
 impl Vm {
@@ -14,6 +19,7 @@ impl Vm {
             program: vec![],
             pc: 0,
             remainder: 0,
+            equal_flag: false,
         }
     }
 
@@ -71,11 +77,81 @@ impl Vm {
             Opcode::HLT => {
                 return false;
             }
+            Opcode::EQ => {
+                let register1 = self.registers[self.next_8_bits() as usize];
+                let register2 = self.registers[self.next_8_bits() as usize];
+                if register1 == register2 {
+                    self.equal_flag = true;
+                } else {
+                    self.equal_flag = false;
+                }
+                self.next_8_bits();
+            }
+            Opcode::NEQ => {
+                let register1 = self.registers[self.next_8_bits() as usize];
+                let register2 = self.registers[self.next_8_bits() as usize];
+                if register1 == register2 {
+                    self.equal_flag = false;
+                } else {
+                    self.equal_flag = true;
+                }
+                self.next_8_bits();
+            }
+            Opcode::GT => {
+                let register1 = self.registers[self.next_8_bits() as usize];
+                let register2 = self.registers[self.next_8_bits() as usize];
+                if register1 > register2 {
+                    self.equal_flag = true;
+                } else {
+                    self.equal_flag = false;
+                }
+                self.next_8_bits();
+            }
+            Opcode::LT => {
+                let register1 = self.registers[self.next_8_bits() as usize];
+                let register2 = self.registers[self.next_8_bits() as usize];
+                if register1 < register2 {
+                    self.equal_flag = true;
+                } else {
+                    self.equal_flag = false;
+                }
+                self.next_8_bits();
+            }
+            Opcode::GTQ => {
+                let register1 = self.registers[self.next_8_bits() as usize];
+                let register2 = self.registers[self.next_8_bits() as usize];
+                if register1 >= register2 {
+                    self.equal_flag = true;
+                } else {
+                    self.equal_flag = false;
+                }
+                self.next_8_bits();
+            }
+            Opcode::LTQ => {
+                let register1 = self.registers[self.next_8_bits() as usize];
+                let register2 = self.registers[self.next_8_bits() as usize];
+                if register1 <= register2 {
+                    self.equal_flag = true;
+                } else {
+                    self.equal_flag = false;
+                }
+                self.next_8_bits();
+            }
+            Opcode::JEQ => {
+                let target = self.registers[self.next_8_bits() as usize];
+                if self.equal_flag {
+                    self.pc = target as usize;
+                }
+            }
             _ => {
                 return false;
             }
         }
         true
+    }
+
+    pub fn add_byte(&mut self, value: u8) {
+        self.program.push(value)
     }
 
     fn decode_opcode(&mut self) -> Opcode {

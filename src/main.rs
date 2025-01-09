@@ -1,5 +1,10 @@
 pub mod instruction;
+mod instruction_test;
+mod repl;
 pub mod vm;
+mod vm_test;
 
-mod tests;
-fn main() {}
+fn main() {
+    let mut repl = repl::REPL::new();
+    repl.run();
+}

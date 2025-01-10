@@ -1,16 +1,23 @@
-use crate::assembler::Token;
-use nom::{digit, named, tag_no_case, types::CompleteStr, ws};
+use nom::{
+    bytes::complete::tag,
+    character::complete::{digit1, multispace0},
+    combinator::map_res,
+    sequence::preceded,
+    IResult,
+};
 
-named!(pub register<CompleteStr, Token>,
-    ws!(
-        do_parse!(
-            tag_no_case!("$") >>
-            reg_num: digit >>
-            (
-                Token::Register{
-                    reg_num: reg_num.parse::<u8>().unwrap()
-                }
-            )
-        )
-    )
-);
+use super::Token;
+
+pub fn register(input: &str) -> IResult<&str, Token> {
+    preceded(
+        multispace0,
+        map_res(
+            preceded(tag("$"), digit1), // skip the $ first
+            |num: &str| {
+                Ok::<Token, &str>(Token::Register {
+                    reg_num: num.parse::<u8>().unwrap(),
+                })
+            },
+        ),
+    )(input)
+}

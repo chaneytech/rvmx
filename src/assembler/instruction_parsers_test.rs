@@ -1,6 +1,5 @@
 #[cfg(test)]
 mod tests {
-    use nom::types::CompleteStr;
 
     use crate::{
         assembler::{
@@ -12,11 +11,12 @@ mod tests {
 
     #[test]
     fn test_parse_instruction_form_one() {
-        let result = instruction_one(CompleteStr("load $0 #100\n"));
+        let result = instruction_one("load $0 #100\n");
+        println!("{:?}", result);
         assert_eq!(
             result,
             Ok((
-                CompleteStr(""),
+                "",
                 AssemblerInstruction {
                     opcode: Token::Op { code: Opcode::LOAD },
                     operand1: Some(Token::Register { reg_num: 0 }),

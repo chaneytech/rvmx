@@ -1,10 +1,15 @@
-use nom::{do_parse, named, types::CompleteStr};
-
-use crate::assembler::{
-    opcode_parsers::opcode_load, operand_parsers::integer_operand, register_parsers::register,
+use nom::{
+    branch::alt,
+    character::complete::{line_ending, multispace0},
+    combinator::{eof, map},
+    sequence::{preceded, terminated, tuple},
+    IResult,
 };
 
-use super::Token;
+use super::{
+    opcode_parsers::opcode_load, operand_parsers::integer_operand, register_parsers::register,
+    Token,
+};
 
 #[derive(Debug, PartialEq)]
 pub struct AssemblerInstruction {
@@ -14,21 +19,23 @@ pub struct AssemblerInstruction {
     pub operand3: Option<Token>,
 }
 
-named!(pub instruction_one<CompleteStr, AssemblerInstruction>,
-    do_parse!(
-        o: opcode_load >>
-        r: register >>
-        i: integer_operand >>
-        (
-            AssemblerInstruction{
-                opcode: o,
-                operand1: Some(r),
-                operand2: Some(i),
-                operand3: None
-            }
-        )
-    )
-);
+pub fn instruction_one(input: &str) -> IResult<&str, AssemblerInstruction> {
+    preceded(
+        multispace0,
+        terminated(
+            map(
+                tuple((opcode_load, register, integer_operand)),
+                |(o, r, i)| AssemblerInstruction {
+                    opcode: o,
+                    operand1: Some(r),
+                    operand2: Some(i),
+                    operand3: None,
+                },
+            ),
+            alt((multispace0, line_ending, eof)),
+        ),
+    )(input)
+}
 
 impl AssemblerInstruction {
     pub fn to_bytes(&self) -> Vec<u8> {

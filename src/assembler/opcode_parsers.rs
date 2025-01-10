@@ -1,10 +1,17 @@
 use crate::assembler::Token;
 use crate::instruction::Opcode;
-use nom::types::CompleteStr;
-use nom::{do_parse, named, tag_no_case};
+use nom::character::complete::{alpha1, multispace0};
+use nom::combinator::map_res;
+use nom::sequence::preceded;
+use nom::IResult;
 
-named!(pub opcode_load<CompleteStr, Token>,
-  do_parse!(
-      tag_no_case!("load") >> (Token::Op{code: Opcode::LOAD})
-  )
-);
+pub fn opcode_load(input: &str) -> IResult<&str, Token> {
+    preceded(
+        multispace0,
+        map_res(alpha1, |s: &str| {
+            Ok::<Token, &str>(Token::Op {
+                code: Opcode::from(s.to_uppercase().as_str()),
+            })
+        }),
+    )(input)
+}

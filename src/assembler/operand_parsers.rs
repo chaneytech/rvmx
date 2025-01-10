@@ -1,15 +1,20 @@
-use crate::assembler::Token;
-use nom::types::CompleteStr;
-use nom::{digit, named, tag_no_case, ws};
+use nom::{
+    bytes::complete::tag,
+    character::complete::{digit1, multispace0},
+    combinator::{map_res},
+    sequence::{preceded},
+    IResult,
+};
 
-named!(pub integer_operand<CompleteStr, Token>,
-    ws!(
-        do_parse!(
-            tag_no_case!("#") >>
-            reg_num: digit >>
-            (
-                Token::IntegerOperand {value: reg_num.parse::<i32>().unwrap()}
-            )
-        )
-    )
-);
+use super::Token;
+
+pub fn integer_operand(input: &str) -> IResult<&str, Token> {
+    preceded(
+        multispace0,
+        map_res(preceded(tag("#"), digit1), |num: &str| {
+            Ok::<Token, &str>(Token::IntegerOperand {
+                value: num.parse::<i32>().unwrap(),
+            })
+        }),
+    )(input)
+}

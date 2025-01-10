@@ -54,3 +54,28 @@ impl From<u8> for Opcode {
         }
     }
 }
+
+impl From<&str> for Opcode {
+    fn from(s: &str) -> Self {
+        match s {
+            "HLT" => Opcode::HLT,
+            "IGL" => Opcode::IGL,
+            "LOAD" => Opcode::LOAD,
+            "ADD" => Opcode::ADD,
+            "SUB" => Opcode::SUB,
+            "MUL" => Opcode::MUL,
+            "DIV" => Opcode::DIV,
+            "JMP" => Opcode::JMP,
+            "JMPF" => Opcode::JMPF,
+            "JMPB" => Opcode::JMPB,
+            "EQ" => Opcode::EQ,
+            "NEQ" => Opcode::NEQ,
+            "GT" => Opcode::GT,
+            "LT" => Opcode::LT,
+            "GTQ" => Opcode::GTQ,
+            "LTQ" => Opcode::LTQ,
+            "JEQ" => Opcode::JEQ,
+            _ => Opcode::IGL,
+        }
+    }
+}

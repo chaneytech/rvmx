@@ -1,5 +1,3 @@
-use nom::types::CompleteStr;
-
 use crate::assembler::program_parsers::program;
 use crate::vm::Vm;
 use std::io;
@@ -54,7 +52,7 @@ impl REPL {
                 }
 
                 _ => {
-                    let parsed_program = program(CompleteStr(buffer));
+                    let parsed_program = program(buffer);
                     if !parsed_program.is_ok() {
                         println!("Unable to parse input");
                         continue;

@@ -1,24 +1,18 @@
-use nom::{do_parse, many1, named, types::CompleteStr};
+use nom::{combinator::map, multi::many1, IResult};
 
-use crate::assembler::instruction_parsers::instruction_one;
-
-use super::instruction_parsers::AssemblerInstruction;
+use super::instruction_parsers::{instruction_one, AssemblerInstruction};
 
 #[derive(Debug, PartialEq)]
 pub struct Program {
     pub instructions: Vec<AssemblerInstruction>,
 }
 
-named!(pub program<CompleteStr, Program>,
-    do_parse!(
-        instructions: many1!(instruction_one) >>
-        (
-            Program {
-                instructions: instructions
-            }
-        )
-    )
-);
+pub fn program(input: &str) -> IResult<&str, Program> {
+    map(
+        many1(instruction_one),
+        |instructions: Vec<AssemblerInstruction>| Program { instructions },
+    )(input)
+}
 
 impl Program {
     pub fn to_bytes(&self) -> Vec<u8> {

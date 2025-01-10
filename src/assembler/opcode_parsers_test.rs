@@ -1,3 +1,4 @@
+#[cfg(test)]
 mod tests {
     use crate::assembler::opcode_parsers::opcode_load;
     use crate::assembler::Token;

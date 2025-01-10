@@ -1,7 +1,9 @@
+use nom::types::CompleteStr;
+
+use crate::assembler::program_parsers::program;
 use crate::vm::Vm;
 use std::io;
 use std::io::Write;
-use std::num::ParseIntError;
 
 pub struct REPL {
     command_buffer: Vec<String>,
@@ -52,31 +54,19 @@ impl REPL {
                 }
 
                 _ => {
-                    let results = self.parse_hex(buffer);
-                    match results {
-                        Ok(bytes) => {
-                            for byte in bytes {
-                                println!("{}", byte);
-                                self.vm.add_byte(byte)
-                            }
-                        }
-                        Err(_e) => {
-                            println!("Unable to decode hex string. Please enter 4 groups of 2 hex characters.")
-                        }
-                    };
+                    let parsed_program = program(CompleteStr(buffer));
+                    if !parsed_program.is_ok() {
+                        println!("Unable to parse input");
+                        continue;
+                    }
+                    let (_, result) = parsed_program.unwrap();
+                    let bytecode = result.to_bytes();
+                    for byte in bytecode {
+                        self.vm.add_byte(byte);
+                    }
                     self.vm.run_once();
                 }
             }
         }
-    }
-
-    fn parse_hex(&mut self, i: &str) -> Result<Vec<u8>, ParseIntError> {
-        let split = i.split(" ").collect::<Vec<&str>>();
-        let mut results: Vec<u8> = vec![];
-        for hex_string in split {
-            let u8 = u8::from_str_radix(hex_string, 16)?;
-            results.push(u8);
-        }
-        Ok(results)
     }
 }

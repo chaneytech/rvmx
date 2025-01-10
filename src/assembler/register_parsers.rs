@@ -1,10 +1,10 @@
 use crate::assembler::Token;
-use nom::{digit, named, tag, types::CompleteStr, ws};
+use nom::{digit, named, tag_no_case, types::CompleteStr, ws};
 
 named!(pub register<CompleteStr, Token>,
     ws!(
         do_parse!(
-            tag!("$") >>
+            tag_no_case!("$") >>
             reg_num: digit >>
             (
                 Token::Register{

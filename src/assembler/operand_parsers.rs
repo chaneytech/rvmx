@@ -1,8 +1,8 @@
 use nom::{
     bytes::complete::tag,
     character::complete::{digit1, multispace0},
-    combinator::{map_res},
-    sequence::{preceded},
+    combinator::map_res,
+    sequence::preceded,
     IResult,
 };
 

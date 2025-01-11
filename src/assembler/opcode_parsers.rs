@@ -5,7 +5,7 @@ use nom::combinator::map_res;
 use nom::sequence::preceded;
 use nom::IResult;
 
-pub fn opcode_load(input: &str) -> IResult<&str, Token> {
+pub fn opcode(input: &str) -> IResult<&str, Token> {
     preceded(
         multispace0,
         map_res(alpha1, |s: &str| {

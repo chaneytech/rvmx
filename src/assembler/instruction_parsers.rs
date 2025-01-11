@@ -7,8 +7,7 @@ use nom::{
 };
 
 use super::{
-    opcode_parsers::opcode_load, operand_parsers::integer_operand, register_parsers::register,
-    Token,
+    opcode_parsers::opcode, operand_parsers::integer_operand, register_parsers::register, Token,
 };
 
 #[derive(Debug, PartialEq)]
@@ -19,17 +18,53 @@ pub struct AssemblerInstruction {
     pub operand3: Option<Token>,
 }
 
+pub fn instruction(input: &str) -> IResult<&str, AssemblerInstruction> {
+    alt((instruction_two, instruction_three, instruction_one))(input)
+}
+
 pub fn instruction_one(input: &str) -> IResult<&str, AssemblerInstruction> {
     preceded(
         multispace0,
         terminated(
-            map(
-                tuple((opcode_load, register, integer_operand)),
-                |(o, r, i)| AssemblerInstruction {
+            map(tuple((opcode,)), |(o,)| AssemblerInstruction {
+                opcode: o,
+                operand1: None,
+                operand2: None,
+                operand3: None,
+            }),
+            alt((multispace0, line_ending, eof)),
+        ),
+    )(input)
+}
+
+pub fn instruction_two(input: &str) -> IResult<&str, AssemblerInstruction> {
+    preceded(
+        multispace0,
+        terminated(
+            map(tuple((opcode, register, integer_operand)), |(o, r, i)| {
+                AssemblerInstruction {
                     opcode: o,
                     operand1: Some(r),
                     operand2: Some(i),
                     operand3: None,
+                }
+            }),
+            alt((multispace0, line_ending, eof)),
+        ),
+    )(input)
+}
+
+pub fn instruction_three(input: &str) -> IResult<&str, AssemblerInstruction> {
+    preceded(
+        multispace0,
+        terminated(
+            map(
+                tuple((opcode, register, register, register)),
+                |(o, r1, r2, r3)| AssemblerInstruction {
+                    opcode: o,
+                    operand1: Some(r1),
+                    operand2: Some(r2),
+                    operand3: Some(r3),
                 },
             ),
             alt((multispace0, line_ending, eof)),

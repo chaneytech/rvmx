@@ -3,7 +3,7 @@ mod tests {
 
     use crate::{
         assembler::{
-            instruction_parsers::{instruction_one, AssemblerInstruction},
+            instruction_parsers::{instruction, AssemblerInstruction},
             Token,
         },
         instruction::Opcode,
@@ -11,7 +11,7 @@ mod tests {
 
     #[test]
     fn test_parse_instruction_form_one() {
-        let result = instruction_one("load $0 #100\n");
+        let result = instruction("load $0 #100\n");
         println!("{:?}", result);
         assert_eq!(
             result,

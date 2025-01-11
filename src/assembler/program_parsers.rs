@@ -1,6 +1,6 @@
 use nom::{combinator::map, multi::many1, IResult};
 
-use super::instruction_parsers::{instruction_one, AssemblerInstruction};
+use super::instruction_parsers::{instruction, AssemblerInstruction};
 
 #[derive(Debug, PartialEq)]
 pub struct Program {
@@ -9,7 +9,7 @@ pub struct Program {
 
 pub fn program(input: &str) -> IResult<&str, Program> {
     map(
-        many1(instruction_one),
+        many1(instruction),
         |instructions: Vec<AssemblerInstruction>| Program { instructions },
     )(input)
 }

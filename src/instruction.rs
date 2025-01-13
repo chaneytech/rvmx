@@ -17,6 +17,7 @@ pub enum Opcode {
     GTQ,
     LTQ,
     JEQ,
+    ALOC,
 }
 
 #[derive(Debug, PartialEq)]
@@ -50,6 +51,7 @@ impl From<u8> for Opcode {
             14 => Opcode::GTQ,
             15 => Opcode::LTQ,
             16 => Opcode::JEQ,
+            17 => Opcode::ALOC,
             _ => Opcode::IGL,
         }
     }
@@ -75,6 +77,7 @@ impl From<&str> for Opcode {
             "GTQ" => Opcode::GTQ,
             "LTQ" => Opcode::LTQ,
             "JEQ" => Opcode::JEQ,
+            "ALOC" => Opcode::ALOC,
             _ => Opcode::IGL,
         }
     }

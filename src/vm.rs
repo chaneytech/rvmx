@@ -1,3 +1,5 @@
+use std::vec;
+
 use crate::instruction::Opcode;
 
 pub struct Vm {
@@ -10,6 +12,7 @@ pub struct Vm {
     pub remainder: u32,
     // Contains the result of the last comparison operation
     pub equal_flag: bool,
+    pub heap: Vec<u8>,
 }
 
 impl Vm {
@@ -20,6 +23,7 @@ impl Vm {
             pc: 0,
             remainder: 0,
             equal_flag: false,
+            heap: vec![],
         }
     }
 
@@ -142,6 +146,12 @@ impl Vm {
                 if self.equal_flag {
                     self.pc = target as usize;
                 }
+            }
+            Opcode::ALOC => {
+                let register = self.next_8_bits() as usize;
+                let bytes = self.registers[register];
+                let new_end = self.heap.len() as i32 + bytes;
+                self.heap.resize(new_end as usize, 0);
             }
             _ => {
                 return false;

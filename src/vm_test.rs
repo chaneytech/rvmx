@@ -187,4 +187,13 @@ mod tests {
         test_vm.run_once();
         assert_eq!(test_vm.pc, 7);
     }
+
+    #[test]
+    fn test_aloc_opcode() {
+        let mut test_vm = Vm::new();
+        test_vm.registers[0] = 1024;
+        test_vm.program = vec![17, 0, 0, 0];
+        test_vm.run_once();
+        assert_eq!(test_vm.heap.len(), 1024);
+    }
 }

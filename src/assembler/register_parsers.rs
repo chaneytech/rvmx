@@ -11,13 +11,10 @@ use super::Token;
 pub fn register(input: &str) -> IResult<&str, Token> {
     preceded(
         multispace0,
-        map_res(
-            preceded(tag("$"), digit1), // skip the $ first
-            |num: &str| {
-                Ok::<Token, &str>(Token::Register {
-                    reg_num: num.parse::<u8>().unwrap(),
-                })
-            },
-        ),
+        map_res(preceded(tag("$"), digit1), |num: &str| {
+            Ok::<Token, &str>(Token::Register {
+                reg_num: num.parse::<u8>().unwrap(),
+            })
+        }),
     )(input)
 }

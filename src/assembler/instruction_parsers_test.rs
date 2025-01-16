@@ -18,10 +18,12 @@ mod tests {
             Ok((
                 "",
                 AssemblerInstruction {
-                    opcode: Token::Op { code: Opcode::LOAD },
+                    opcode: Some(Token::Op { code: Opcode::LOAD }),
                     operand1: Some(Token::Register { reg_num: 0 }),
                     operand2: Some(Token::IntegerOperand { value: 100 }),
-                    operand3: None
+                    operand3: None,
+                    label: None,
+                    directive: None,
                 }
             ))
         );

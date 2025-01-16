@@ -1,4 +1,5 @@
 use nom::{
+    branch::alt,
     bytes::complete::tag,
     character::complete::{digit1, multispace0},
     combinator::map_res,
@@ -6,7 +7,7 @@ use nom::{
     IResult,
 };
 
-use super::Token;
+use super::{register_parsers::register, Token};
 
 pub fn integer_operand(input: &str) -> IResult<&str, Token> {
     preceded(
@@ -17,4 +18,8 @@ pub fn integer_operand(input: &str) -> IResult<&str, Token> {
             })
         }),
     )(input)
+}
+
+pub fn operand(input: &str) -> IResult<&str, Token> {
+    alt((integer_operand, register))(input)
 }
